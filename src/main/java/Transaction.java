@@ -1,7 +1,7 @@
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public interface RetryableTransaction {
+public interface Transaction {
 
 
     void attemptTransaction(Connection conn) throws SQLException;

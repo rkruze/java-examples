@@ -39,10 +39,9 @@ public class InsertBatchExample extends BaseExample {
         Random random = new Random();
 
         try (Connection connection = DriverManager.getConnection(url, connectionProperties)) {
+            executeUpdate(connection, DROP_TABLE);
 
-            executeStatement(connection, DROP_TABLE);
-
-            executeStatement(connection, CREATE_TABLE);
+            executeUpdate(connection, CREATE_TABLE);
 
             connection.setAutoCommit(false);
 
@@ -52,25 +51,15 @@ public class InsertBatchExample extends BaseExample {
                     statement.setInt(1, random.nextInt());
                     statement.addBatch();
 
-                    if ( ((i + 1) % batchSize) == 0) {
-                        int[] counts = statement.executeBatch();
-
-                        printCounts(counts);
-
-                        statement.clearBatch();
-                        connection.commit();
+                    if (((i + 1) % batchSize) == 0) {
+                        saveBatch(connection, statement);
                     }
 
                 }
 
                 log.debug("executing cleanup...");
 
-                int[] counts = statement.executeBatch();
-
-                printCounts(counts);
-
-                statement.clearBatch();
-                connection.commit();
+                saveBatch(connection, statement);
 
             } catch (SQLException e) {
                 log.error(e.getMessage(), e);
@@ -78,9 +67,30 @@ public class InsertBatchExample extends BaseExample {
 
             connection.setAutoCommit(true);
 
+
+            verifyCount(recordCount, connection);
+
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+
+    private static void saveBatch(Connection connection, PreparedStatement statement) throws SQLException {
+
+        commit(connection, conn -> {
+
+            log.debug("attempting to execute batch");
+            int[] counts = statement.executeBatch();
+
+            printCounts(counts);
+
+            statement.clearBatch();
+
+            log.debug("execute batch successful!!!");
+
+        });
+
     }
 
 }
