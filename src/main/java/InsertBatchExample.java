@@ -52,7 +52,7 @@ public class InsertBatchExample {
                     statement.setInt(1, random.nextInt());
                     statement.addBatch();
 
-                    if ( i != 0 && (i % batchSize) == 0) {
+                    if ( ((i + 1) % batchSize) == 0) {
                         int[] counts = statement.executeBatch();
 
                         printCounts(counts);
@@ -62,6 +62,8 @@ public class InsertBatchExample {
                     }
 
                 }
+
+                log.debug("executing cleanup...");
 
                 int[] counts = statement.executeBatch();
 
