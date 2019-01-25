@@ -1,3 +1,6 @@
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
@@ -5,13 +8,19 @@ import java.util.Random;
 
 public class InsertBatchExample {
 
+    private static final Logger log = LoggerFactory.getLogger(InsertBatchExample.class);
+
+    private static final String CREATE_DATABASE = "DROP TABLE IF EXISTS accounts";
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), balance INT)";
+    private static final String INSERT = "INSERT INTO accounts(balance) VALUES(?)";
+
 
     public static void main(String[] args) throws IOException {
 
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         Properties cockroachProperties = new Properties();
@@ -31,27 +40,19 @@ public class InsertBatchExample {
 
         try (Connection connection = DriverManager.getConnection(url, connectionProperties)) {
 
-            try (Statement statement = connection.createStatement()) {
-                statement.execute("DROP TABLE IF EXISTS accounts");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            executeStatement(connection, CREATE_DATABASE);
 
-            try (Statement statement = connection.createStatement()) {
-                statement.execute("CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), balance INT)");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            executeStatement(connection, CREATE_TABLE);
 
             connection.setAutoCommit(false);
 
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO accounts(balance) VALUES(?)")) {
+            try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
 
                 for (int i = 0; i < recordCount; i++) {
                     statement.setInt(1, random.nextInt());
                     statement.addBatch();
 
-                    if ((i % batchSize) == 0) {
+                    if ( i != 0 && (i % batchSize) == 0) {
                         int[] counts = statement.executeBatch();
 
                         printCounts(counts);
@@ -70,26 +71,34 @@ public class InsertBatchExample {
                 connection.commit();
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
 
             connection.setAutoCommit(true);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    private static void executeStatement(Connection connection, String sql) {
+        try (Statement statement = connection.createStatement()) {
+            statement.execute(sql);
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
         }
     }
 
     private static void printCounts(int[] counts) {
-        System.out.println("counts size = " + counts.length);
+        log.debug("counts size = " + counts.length);
 
         for (int count : counts) {
             if (count == -2) {
-                System.out.println("batch SUCCESS_NO_INFO");
+                log.trace("batch SUCCESS_NO_INFO");
             } else if (count == -3) {
-                System.out.println("batch EXECUTE_FAILED");
+                log.trace("batch EXECUTE_FAILED");
             } else {
-                System.out.println("batch update count = " + count);
+                log.trace("batch update count = " + count);
             }
         }
     }
