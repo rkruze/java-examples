@@ -10,7 +10,7 @@ public class InsertBatchExample {
 
     private static final Logger log = LoggerFactory.getLogger(InsertBatchExample.class);
 
-    private static final String CREATE_DATABASE = "DROP TABLE IF EXISTS accounts";
+    private static final String DROP_TABLE = "DROP TABLE IF EXISTS accounts";
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), balance INT)";
     private static final String INSERT = "INSERT INTO accounts(balance) VALUES(?)";
 
@@ -40,7 +40,7 @@ public class InsertBatchExample {
 
         try (Connection connection = DriverManager.getConnection(url, connectionProperties)) {
 
-            executeStatement(connection, CREATE_DATABASE);
+            executeStatement(connection, DROP_TABLE);
 
             executeStatement(connection, CREATE_TABLE);
 
