@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.Properties;
 import java.util.Random;
 
-public class InsertBatchExample {
+public class InsertBatchExample extends BaseExample {
 
     private static final Logger log = LoggerFactory.getLogger(InsertBatchExample.class);
 
@@ -83,25 +83,4 @@ public class InsertBatchExample {
         }
     }
 
-    private static void executeStatement(Connection connection, String sql) {
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(sql);
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    private static void printCounts(int[] counts) {
-        log.debug("counts size = " + counts.length);
-
-        for (int count : counts) {
-            if (count == -2) {
-                log.trace("batch SUCCESS_NO_INFO");
-            } else if (count == -3) {
-                log.trace("batch EXECUTE_FAILED");
-            } else {
-                log.trace("batch update count = " + count);
-            }
-        }
-    }
 }
