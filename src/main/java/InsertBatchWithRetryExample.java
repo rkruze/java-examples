@@ -34,7 +34,7 @@ public class InsertBatchWithRetryExample extends BaseExample {
         Properties connectionProperties = new Properties();
         connectionProperties.setProperty("user", "root");
         connectionProperties.setProperty("sslmode", "disable");
-        connectionProperties.setProperty("ApplicationName", InsertBatchWithRetryExample.class.toString());
+        connectionProperties.setProperty("ApplicationName", InsertBatchWithRetryExample.class.getName());
         connectionProperties.setProperty("reWriteBatchedInserts", "true");
 
         Random random = new Random();
