@@ -1,5 +1,5 @@
 Start simple cluster in Docker with `docker` > `./run.sh`
 
-Run `InsertBatchExample`
+Run `BatchInsertExample`
 
 Configure with `cockroach.properties`
