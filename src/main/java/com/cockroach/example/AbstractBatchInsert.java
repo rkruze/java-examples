@@ -79,6 +79,9 @@ public abstract class AbstractBatchInsert  {
         Random random = new Random();
 
         try (Connection connection = DriverManager.getConnection(url, connectionProperties)) {
+
+            log.info("TRANSACTION ISOLATION: {}", connection.getTransactionIsolation());
+
             executeUpdate(connection, DROP_TABLE);
 
             executeUpdate(connection, CREATE_TABLE);
