@@ -125,9 +125,12 @@ public abstract class AbstractBatchInsert  {
 
             printCounts(counts);
 
+            // execute batch in PG driver calls clear so this is redundant
+            /*
             log.debug("attempting to clear batch...");
             statement.clearBatch();
             log.debug("clear batch successful!");
+            */
 
         };
 
