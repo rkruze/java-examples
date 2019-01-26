@@ -13,8 +13,8 @@ class BatchInsertExample extends AbstractBatchInsert {
         transactionWrapper.attemptTransaction(connection);
         log.debug("transaction.attemptTransaction(): successful");
 
-        log.debug("connection.commit(): starting");
+        log.debug("commit(): starting");
         connection.commit();
-        log.debug("connection.commit(): successful");
+        log.debug("commit(): successful");
     }
 }
