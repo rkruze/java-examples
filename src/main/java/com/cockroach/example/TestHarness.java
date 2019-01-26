@@ -1,3 +1,5 @@
+package com.cockroach.example;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +31,7 @@ public class TestHarness {
         if (test.equals(BATCH_INSERT_TEST)) {
             try {
 
-                connectionProperties.setProperty("ApplicationName", "BatchInsertExample");
+                connectionProperties.setProperty("ApplicationName", "com.cockroach.example.BatchInsertExample");
 
                 new BatchInsertExample().run(connectionProperties);
             } catch (IOException e) {
@@ -40,7 +42,7 @@ public class TestHarness {
         if (test.equals(BATCH_INSERT_WITH_RETRY)) {
             try {
 
-                connectionProperties.setProperty("ApplicationName", "BatchInsertWithRetryExample");
+                connectionProperties.setProperty("ApplicationName", "com.cockroach.example.BatchInsertWithRetryExample");
 
                 new BatchInsertWithRetryExample().run(connectionProperties);
             } catch (IOException e) {
