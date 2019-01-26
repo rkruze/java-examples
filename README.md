@@ -4,7 +4,7 @@ Configure with `cockroach.properties`
 
 To build...
 ```
-> mvn clean package
+> ./mvnw clean package
 ```
 
 To run...
