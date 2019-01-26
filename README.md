@@ -1,3 +1,5 @@
+# Java Examples
+
 Start simple cluster in Docker with `docker` > `./run.sh`
 
 Configure with `cockroach.properties`

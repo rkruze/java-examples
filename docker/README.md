@@ -1,4 +1,4 @@
-# Example 1 - Basic CockroachDB Cluster
+# Basic CockroachDB Cluster
 Simple 3 node CockroachDB cluster fronted by NGINX acting as load balancer
 
 ## Services
@@ -15,9 +15,9 @@ Simple 3 node CockroachDB cluster fronted by NGINX acting as load balancer
 ## Helpful Commands
 
 ### Execute SQL
-Use the following to execute arbitrary SQL on the CockroachDB cluster.  The following creates a database called `test`.
+Use the following to execute arbitrary SQL on the CockroachDB cluster.  The following creates a database called `examples`.
 ```bash
-docker-compose exec roach-0 /cockroach/cockroach sql --insecure --execute="CREATE DATABASE test;"
+docker-compose exec roach-0 /cockroach/cockroach sql --insecure --execute="CREATE DATABASE examples;"
 ```
 
 ### Open Interactive Shells
