@@ -10,13 +10,13 @@ public class InsertExample extends AbstractInsert {
 
         try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
 
-            for (int i = 0; i < recordCount; i++) {
+            for (int i = 1; i <= recordCount; i++) {
                 statement.setInt(1, RANDOM.nextInt());
-
-                log.debug("attempting to insert record {}", i);
-
                 statement.executeUpdate();
 
+                if ((i % batchSize) == 0) {
+                    log.debug("processed {} records", i);
+                }
             }
         }
     }

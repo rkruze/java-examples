@@ -6,13 +6,10 @@ import java.sql.Savepoint;
 
 public class BatchInsertWithRetryExample extends AbstractBatchInsert {
 
-    private static final String SAVEPOINT = "cockroach_restart";
-
-
     @Override
     void commit(Connection connection, Transaction transaction) throws SQLException {
 
-        Savepoint savepoint = connection.setSavepoint(SAVEPOINT);
+        Savepoint savepoint = connection.setSavepoint(SAVEPOINT_NAME);
 
         int retryCounter = 1;
 

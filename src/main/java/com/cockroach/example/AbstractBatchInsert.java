@@ -11,6 +11,7 @@ public abstract class AbstractBatchInsert extends AbstractInsert {
 
     final Logger log = LoggerFactory.getLogger(getClass());
 
+    static final String SAVEPOINT_NAME = "cockroach_restart";
 
     private void printCounts(int[] counts) {
         log.debug("batch statement results size = " + counts.length);
@@ -34,11 +35,11 @@ public abstract class AbstractBatchInsert extends AbstractInsert {
 
         try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
 
-            for (int i = 0; i < recordCount; i++) {
+            for (int i = 1; i <= recordCount; i++) {
                 statement.setInt(1, RANDOM.nextInt());
                 statement.addBatch();
 
-                if (((i + 1) % batchSize) == 0) {
+                if ((i % batchSize) == 0) {
                     saveBatch(connection, statement);
                 }
 
