@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
-public class BatchInsertWithRetryExample extends AbstractBatchInsert{
+public class BatchInsertWithRetryExample extends AbstractBatchInsert {
 
-    private static final String SAVEPOINT = "COCKROACH_RESTART";
+    private static final String SAVEPOINT = "cockroach_restart";
 
 
     @Override
@@ -21,13 +21,14 @@ public class BatchInsertWithRetryExample extends AbstractBatchInsert{
             boolean releaseAttempted = false;
 
             try {
-                log.debug("attempting transaction: {}", retryCounter);
+                log.debug("transaction.attemptTransaction(): starting; attempt {}", retryCounter);
                 transaction.attemptTransaction(connection);
+                log.debug("transaction.attemptTransaction(): successful; attempt {}", retryCounter);
                 releaseAttempted = true;
 
-                log.debug("attempting to release savepoint: {}", retryCounter);
+                log.debug("releaseSavepoint(): starting; attempt {}", retryCounter);
                 connection.releaseSavepoint(savepoint);
-                log.debug("savepoint released: {}", retryCounter);
+                log.debug("releaseSavepoint(): successful; attempt {}", retryCounter);
                 break;
             } catch (SQLException e) {
 
@@ -36,9 +37,9 @@ public class BatchInsertWithRetryExample extends AbstractBatchInsert{
                 log.error(e.getMessage(), e);
 
                 if (sqlState.equals("40001")) {
-                    log.warn("attempting rollback: {}", retryCounter);
+                    log.debug("rollback(): starting; attempt {}", retryCounter);
                     connection.rollback(savepoint);
-                    log.debug("rollback successful: {}", retryCounter);
+                    log.debug("rollback(): starting; attempt {}", retryCounter);
                 } else if (releaseAttempted) {
                     throw new RuntimeException("fail during release?", e);
                 } else {
@@ -50,8 +51,8 @@ public class BatchInsertWithRetryExample extends AbstractBatchInsert{
         }
 
 
-        log.debug("attempting commit: {}", retryCounter);
+        log.debug("commit(): starting; attempt {}", retryCounter);
         connection.commit();
-        log.debug("commit successful: {}", retryCounter);
+        log.debug("commit(): successful; attempt {}", retryCounter);
     }
 }

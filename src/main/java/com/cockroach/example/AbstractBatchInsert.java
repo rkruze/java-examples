@@ -118,9 +118,9 @@ public abstract class AbstractBatchInsert  {
 
         Transaction transaction = conn -> {
 
-            log.debug("attempting to execute batch...");
+            log.debug("executeBatch(): starting");
             int[] counts = statement.executeBatch();
-            log.debug("execute batch successful!");
+            log.debug("executeBatch(): successful");
 
 
             printCounts(counts);
