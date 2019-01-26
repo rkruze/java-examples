@@ -1,4 +1,4 @@
-# Java Examples
+# CockroachDB Java Examples
 Collection of Java Examples for CockroachDB
 
 ## Getting Started
