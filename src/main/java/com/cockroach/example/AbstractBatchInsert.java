@@ -82,6 +82,10 @@ public abstract class AbstractBatchInsert  {
 
             log.info("TRANSACTION ISOLATION: {}", connection.getTransactionIsolation());
 
+            if (connection.getTransactionIsolation() != Connection.TRANSACTION_SERIALIZABLE) {
+                throw new IllegalArgumentException("transaction isolation must be Connection.TRANSACTION_SERIALIZABLE");
+            }
+
             executeUpdate(connection, DROP_TABLE);
 
             executeUpdate(connection, CREATE_TABLE);
