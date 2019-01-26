@@ -36,7 +36,7 @@ public class BatchInsertWithRetryExample extends AbstractBatchInsert {
                 if (sqlState.equals("40001")) {
                     log.debug("rollback(): starting; attempt {}", retryCounter);
                     connection.rollback(savepoint);
-                    log.debug("rollback(): starting; attempt {}", retryCounter);
+                    log.debug("rollback(): successful; attempt {}", retryCounter);
                 } else if (releaseAttempted) {
                     throw new RuntimeException("fail during release?", e);
                 } else {
