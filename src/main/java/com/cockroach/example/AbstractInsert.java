@@ -46,11 +46,8 @@ public abstract class AbstractInsert {
             }
 
             if (count != recordCount) {
-                log.error("************************** count of inserts {} does not match expected count {} ************************** ", count, recordCount);
-            } else {
-                log.info("counts match!!!!");
+                throw new RuntimeException(String.format("count of inserts [%d] does not match expected count [%d]", count, recordCount));
             }
-
         }
     }
 
@@ -94,7 +91,7 @@ public abstract class AbstractInsert {
                 }
             });
 
-            log.info("insert time {} seconds", timer.totalTime(TimeUnit.SECONDS));
+            log.info("insert time: {} seconds or {} ms", timer.totalTime(TimeUnit.SECONDS), timer.totalTime(TimeUnit.MILLISECONDS));
 
             verifyCount(recordCount, connection);
 
