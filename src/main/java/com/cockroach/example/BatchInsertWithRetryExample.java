@@ -33,9 +33,7 @@ public class BatchInsertWithRetryExample extends AbstractBatchInsert{
 
                 String sqlState = e.getSQLState();
 
-                // Check if the error code indicates a SERIALIZATION_FAILURE.
                 if (sqlState.equals("40001")) {
-                    // Signal the database that we will attempt a retry.
                     log.warn("attempting rollback: {} after error [{}]", retryCounter, e.getMessage());
                     connection.rollback(savepoint);
                     log.debug("rollback successful: {}", retryCounter);
