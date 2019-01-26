@@ -25,6 +25,8 @@ public class TestHarness {
         Properties connectionProperties = new Properties();
         connectionProperties.setProperty("user", "root");
         connectionProperties.setProperty("sslmode", "disable");
+
+        // this increases insert performance considerably
         connectionProperties.setProperty("reWriteBatchedInserts", "true");
 
 
