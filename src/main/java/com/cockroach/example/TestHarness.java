@@ -9,6 +9,7 @@ import java.util.Properties;
 public class TestHarness {
 
     private static final Logger log = LoggerFactory.getLogger(TestHarness.class);
+    private static final String INSERT_TEST = "i";
     private static final String BATCH_INSERT_TEST = "bi";
     private static final String BATCH_INSERT_WITH_RETRY = "bir";
 
@@ -29,6 +30,17 @@ public class TestHarness {
         // this increases insert performance considerably
         connectionProperties.setProperty("reWriteBatchedInserts", "true");
 
+
+        if (test.equals(INSERT_TEST)) {
+            try {
+
+                connectionProperties.setProperty("ApplicationName", "com.cockroach.example.InsertExample");
+
+                new InsertExample().run(connectionProperties);
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
 
         if (test.equals(BATCH_INSERT_TEST)) {
             try {

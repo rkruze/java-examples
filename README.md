@@ -11,6 +11,9 @@ Collection of Java Examples for CockroachDB
 ```
 4) Run test
 ```bash
+# Insert Test
+java -jar java-examples-1.0-SNAPSHOT.jar i
+
 # Batch Insert Test
 java -jar java-examples-1.0-SNAPSHOT.jar bi
 
