@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
-public class BatchInsertWithRetryExample extends AbstractBatchInsert {
+class BatchInsertWithRetryExample extends AbstractBatchInsert {
 
     @Override
     void commit(Connection connection, TransactionWrapper transactionWrapper) throws SQLException {

@@ -3,7 +3,7 @@ package com.cockroach.example;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class BatchInsertExample extends AbstractBatchInsert {
+class BatchInsertExample extends AbstractBatchInsert {
 
 
     @Override

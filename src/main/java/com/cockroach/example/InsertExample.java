@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class InsertExample extends AbstractInsert {
+class InsertExample extends AbstractInsert {
     @Override
     void insert(int recordCount, int batchSize, Connection connection) throws SQLException {
 

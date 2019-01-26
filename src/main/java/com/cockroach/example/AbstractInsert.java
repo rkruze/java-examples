@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public abstract class AbstractInsert {
+abstract class AbstractInsert {
 
     final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -22,11 +22,11 @@ public abstract class AbstractInsert {
 
     static final Random RANDOM = new Random();
 
-    public AbstractInsert() {
+    AbstractInsert() {
         Metrics.addRegistry(new SimpleMeterRegistry());
     }
 
-    void executeUpdate(Connection connection, String sql) {
+    private void executeUpdate(Connection connection, String sql) {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
@@ -35,7 +35,7 @@ public abstract class AbstractInsert {
     }
 
 
-    void verifyCount(int recordCount, Connection connection) throws SQLException {
+    private void verifyCount(int recordCount, Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select count(*) from accounts")) {
 
