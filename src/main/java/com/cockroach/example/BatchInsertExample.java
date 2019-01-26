@@ -7,10 +7,10 @@ public class BatchInsertExample extends AbstractBatchInsert {
 
 
     @Override
-    void commit(Connection connection, Transaction transaction) throws SQLException {
+    void commit(Connection connection, TransactionWrapper transactionWrapper) throws SQLException {
 
         log.debug("transaction.attemptTransaction(): starting");
-        transaction.attemptTransaction(connection);
+        transactionWrapper.attemptTransaction(connection);
         log.debug("transaction.attemptTransaction(): successful");
 
         log.debug("connection.commit(): starting");

@@ -7,7 +7,7 @@ import java.sql.Savepoint;
 public class BatchInsertWithRetryExample extends AbstractBatchInsert {
 
     @Override
-    void commit(Connection connection, Transaction transaction) throws SQLException {
+    void commit(Connection connection, TransactionWrapper transactionWrapper) throws SQLException {
 
         Savepoint savepoint = connection.setSavepoint(SAVEPOINT_NAME);
 
@@ -19,7 +19,7 @@ public class BatchInsertWithRetryExample extends AbstractBatchInsert {
 
             try {
                 log.debug("transaction.attemptTransaction(): starting; attempt {}", retryCounter);
-                transaction.attemptTransaction(connection);
+                transactionWrapper.attemptTransaction(connection);
                 log.debug("transaction.attemptTransaction(): successful; attempt {}", retryCounter);
                 releaseAttempted = true;
 

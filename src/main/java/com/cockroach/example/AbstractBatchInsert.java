@@ -57,7 +57,7 @@ public abstract class AbstractBatchInsert extends AbstractInsert {
 
     private void saveBatch(Connection connection, PreparedStatement statement) throws SQLException {
 
-        Transaction transaction = conn -> {
+        commit(connection, conn -> {
 
             log.debug("executeBatch(): starting");
             int[] counts = statement.executeBatch();
@@ -66,20 +66,11 @@ public abstract class AbstractBatchInsert extends AbstractInsert {
 
             printCounts(counts);
 
-            // execute batch in PG driver calls clear so this is redundant
-            /*
-            log.debug("attempting to clear batch...");
-            statement.clearBatch();
-            log.debug("clear batch successful!");
-            */
-
-        };
-
-        commit(connection, transaction);
+        });
 
     }
 
-    abstract void commit(Connection connection, Transaction transaction) throws SQLException;
+    abstract void commit(Connection connection, TransactionWrapper transactionWrapper) throws SQLException;
 
 
 }
