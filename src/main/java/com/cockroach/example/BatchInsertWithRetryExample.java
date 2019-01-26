@@ -33,8 +33,10 @@ public class BatchInsertWithRetryExample extends AbstractBatchInsert{
 
                 String sqlState = e.getSQLState();
 
+                log.error(e.getMessage(), e);
+
                 if (sqlState.equals("40001")) {
-                    log.warn("attempting rollback: {} after error [{}]", retryCounter, e.getMessage());
+                    log.warn("attempting rollback: {}", retryCounter);
                     connection.rollback(savepoint);
                     log.debug("rollback successful: {}", retryCounter);
                 } else if (releaseAttempted) {
