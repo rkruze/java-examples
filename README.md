@@ -1,20 +1,20 @@
 # Java Examples
+Collection of Java Examples for CockroachDB
 
-Start simple cluster in Docker with `docker` > `./run.sh`
+## Getting Started
 
-Configure with `cockroach.properties`
-
-To build...
+1) Start simple cluster in Docker with `docker` > `./run.sh`.  For more info see [README](docker/README.md).
+2) Configure parameters with `cockroach.properties`.  For more info see [here](src/main/resources/cockroach.properties).
+3) Build `java-examples-1.0-SNAPSHOT.jar` with Maven.  
+```bash
+./mvnw clean package
 ```
-> ./mvnw clean package
-```
-
-To run...
-```
+4) Run test
+```bash
 # Batch Insert Test
-> java -jar java-examples-1.0-SNAPSHOT.jar bi
+java -jar java-examples-1.0-SNAPSHOT.jar bi
 
 # Batch Insert Test with Retry
-> java -jar java-examples-1.0-SNAPSHOT.jar bir
+java -jar java-examples-1.0-SNAPSHOT.jar bir
 ```
 
