@@ -28,7 +28,8 @@ abstract class AbstractInsert {
 
     private void executeUpdate(Connection connection, String sql) {
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(sql);
+            final int i = statement.executeUpdate(sql);
+            log.debug("updated {} records", i);
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
         }
@@ -81,7 +82,11 @@ abstract class AbstractInsert {
 
             executeUpdate(connection, DROP_TABLE);
 
-            executeUpdate(connection, CREATE_TABLE);
+            timer.record(() -> {
+                executeUpdate(connection, CREATE_TABLE);
+            });
+
+            log.info("create table time: {} ms or {} ns", timer.totalTime(TimeUnit.MILLISECONDS), timer.totalTime(TimeUnit.NANOSECONDS));
 
             timer.record(() -> {
                 try {
