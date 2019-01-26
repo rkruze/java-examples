@@ -1,5 +1,8 @@
 package com.cockroach.example;
 
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,6 +10,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractInsert {
 
@@ -17,6 +21,10 @@ public abstract class AbstractInsert {
     static final String INSERT = "INSERT INTO accounts(balance) VALUES(?)";
 
     static final Random RANDOM = new Random();
+
+    public AbstractInsert() {
+        Metrics.addRegistry(new SimpleMeterRegistry());
+    }
 
     void executeUpdate(Connection connection, String sql) {
         try (Statement statement = connection.createStatement()) {
@@ -62,6 +70,10 @@ public abstract class AbstractInsert {
         final int recordCount = Integer.parseInt(cockroachProperties.getProperty("record.count", "1000"));
 
 
+        Timer timer = Timer
+                .builder("insert")
+                .register(Metrics.globalRegistry);
+
         try (Connection connection = DriverManager.getConnection(url, connectionProperties)) {
 
             log.info("TRANSACTION ISOLATION: {}", connection.getTransactionIsolation());
@@ -74,7 +86,15 @@ public abstract class AbstractInsert {
 
             executeUpdate(connection, CREATE_TABLE);
 
-            insert(recordCount, batchSize, connection);
+            timer.record(() -> {
+                try {
+                    insert(recordCount, batchSize, connection);
+                } catch (SQLException e) {
+                    log.error(e.getMessage(), e);
+                }
+            });
+
+            log.info("insert time {} seconds", timer.totalTime(TimeUnit.SECONDS));
 
             verifyCount(recordCount, connection);
 
