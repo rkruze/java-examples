@@ -2,6 +2,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Properties;
 
 public class TestHarness {
 
@@ -19,9 +20,18 @@ public class TestHarness {
         }
 
 
+        Properties connectionProperties = new Properties();
+        connectionProperties.setProperty("user", "root");
+        connectionProperties.setProperty("sslmode", "disable");
+        connectionProperties.setProperty("reWriteBatchedInserts", "true");
+
+
         if (test.equals(BATCH_INSERT_TEST)) {
             try {
-                new BatchInsertExample().run();
+
+                connectionProperties.setProperty("ApplicationName", "BatchInsertExample");
+
+                new BatchInsertExample().run(connectionProperties);
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
@@ -29,7 +39,10 @@ public class TestHarness {
 
         if (test.equals(BATCH_INSERT_WITH_RETRY)) {
             try {
-                new BatchInsertWithRetryExample().run();
+
+                connectionProperties.setProperty("ApplicationName", "BatchInsertWithRetryExample");
+
+                new BatchInsertWithRetryExample().run(connectionProperties);
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }

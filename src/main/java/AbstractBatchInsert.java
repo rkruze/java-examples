@@ -59,7 +59,7 @@ public abstract class AbstractBatchInsert  {
         }
     }
 
-    public void run() throws IOException {
+    public void run(Properties connectionProperties) throws IOException {
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -73,12 +73,6 @@ public abstract class AbstractBatchInsert  {
         final String url = cockroachProperties.getProperty("jdbc.url");
         final int batchSize = Integer.parseInt(cockroachProperties.getProperty("jdbc.batch.size", "5"));
         final int recordCount = Integer.parseInt(cockroachProperties.getProperty("record.count", "1000"));
-
-        Properties connectionProperties = new Properties();
-        connectionProperties.setProperty("user", "root");
-        connectionProperties.setProperty("sslmode", "disable");
-        connectionProperties.setProperty("ApplicationName", AbstractBatchInsert.class.getName());
-        connectionProperties.setProperty("reWriteBatchedInserts", "true");
 
         Random random = new Random();
 
