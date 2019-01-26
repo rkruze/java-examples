@@ -18,3 +18,9 @@ java -jar java-examples-1.0-SNAPSHOT.jar bi
 java -jar java-examples-1.0-SNAPSHOT.jar bir
 ```
 
+## Miscellaneous
+You can view Postgres Driver logging by adding the following parameter at startup:
+```bash
+-Djava.util.logging.config.file=src/main/resources/logging.properties
+```
+
