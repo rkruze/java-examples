@@ -63,7 +63,7 @@ abstract class AbstractInsert {
             log.error(e.getMessage(), e);
         }
 
-        Properties cockroachProperties = new Properties();
+        final Properties cockroachProperties = new Properties();
         cockroachProperties.load(AbstractInsert.class.getClassLoader().getResourceAsStream("cockroach.properties"));
 
         final String url = cockroachProperties.getProperty("jdbc.url");
