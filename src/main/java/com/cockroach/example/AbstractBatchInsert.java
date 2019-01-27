@@ -13,20 +13,6 @@ abstract class AbstractBatchInsert extends AbstractInsert {
 
     static final String SAVEPOINT_NAME = "cockroach_restart";
 
-    private void printCounts(int[] counts) {
-        log.debug("batch statement results size = " + counts.length);
-
-        for (int count : counts) {
-            if (count == -2) {
-                log.trace("batch SUCCESS_NO_INFO");
-            } else if (count == -3) {
-                log.trace("batch EXECUTE_FAILED");
-            } else {
-                log.trace("batch update count = " + count);
-            }
-        }
-    }
-
 
     @Override
     void insert(int recordCount, int batchSize, Connection connection) throws SQLException {
@@ -68,6 +54,20 @@ abstract class AbstractBatchInsert extends AbstractInsert {
 
         });
 
+    }
+
+    private void printCounts(int[] counts) {
+        log.debug("batch statement results size = " + counts.length);
+
+        for (int count : counts) {
+            if (count == -2) {
+                log.trace("batch SUCCESS_NO_INFO");
+            } else if (count == -3) {
+                log.trace("batch EXECUTE_FAILED");
+            } else {
+                log.trace("batch update count = " + count);
+            }
+        }
     }
 
     abstract void commit(Connection connection, TransactionWrapper transactionWrapper) throws SQLException;
