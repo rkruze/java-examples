@@ -6,6 +6,7 @@
 * failures always seem to happen in the first iteration after DDL statements, never in the later iterations which seems to indicated its related to timing of DDL.
 * the duration of the DDL statements as captured in Java does not seem to influence the failure rate. In other words, longer DDL statements do not equal higher failure rates; shorter executions do not reduce failure rates.  This suggests the conflict happens because of something happening in the cluster and after JDBC believes the DDL statement has completed.
 * retry works, but batched statements are lost
+* removing load balancer seems to increase failure rate
 
 With batch size of `250` and record count of `1000`:
 
@@ -39,6 +40,11 @@ With batch size of `250` and record count of `1000`:
 
 ### With Pause (10ms)
 * When running `BatchInsertExample` in loop of `100`, it fails roughly `35%` of time when a pause of `10ms` after DDL is included.
+
+## Three Node Cluster without Load Balancer
+
+### No Pause
+* When running `BatchInsertExample` in loop of `100`, it fails roughly `67%` of time when no pause after DDL is included.
 
 ## Single Node Cluster
 
