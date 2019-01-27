@@ -12,6 +12,10 @@ With batch size of `250` and record count of `1000`:
 ## No Pause, No Transaction
 * When running `BatchInsertExample` in loop of `100` with `transactions` disabled, it fails roughly `0%` of time when no pause after DDL is included.
 
+## No Pause, RETURNING NOTHING
+* When running `BatchInsertExample` in loop of `100` with `RETURNING NOTHING` appended to the insert statement, it fails roughly `64%` of time when no pause after DDL is included.
+
+
 ## With Pause (1000ms)
 * When running `BatchInsertExample` in loop of `100`, it fails roughly `0%` of time when a pause of `1000ms` after DDL is included.
 * When running `BatchInsertWithRetryExample` in loop of `100`, it fails roughly `0%` of time when a pause of `1000ms` after DDL is included.
@@ -31,8 +35,8 @@ With batch size of `250` and record count of `1000`:
 ## With Pause (10ms)
 * When running `BatchInsertExample` in loop of `100`, it fails roughly `35%` of time when a pause of `10ms` after DDL is included.
 
-
 # Questions
 * could this be related to the use of a load balancer?
 * surprised by this statement "...do not include the INSERT statements within a transaction." here: https://www.cockroachlabs.com/docs/v2.1/performance-best-practices-overview.html#use-multi-row-insert-statements-for-bulk-inserts-into-existing-tables
     * __when disabling transactions, i don't see any issues__
+* `INSERT` docs suggest that `RETURN NOTHING` can be used for inserts inside a transaction... "Within a transaction, use RETURNING NOTHING to return nothing in the response, not even the number of rows affected." This led to higher failure rates in my tests.
