@@ -19,6 +19,8 @@ abstract class AbstractInsert {
 
     private static final String DROP_TABLE = "DROP TABLE IF EXISTS accounts";
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), balance INT)";
+    private static final String SELECT_COUNT = "select count(*) from accounts";
+
     static final String INSERT = "INSERT INTO accounts(balance) VALUES(?)";
 
     static final Random RANDOM = new Random();
@@ -27,33 +29,7 @@ abstract class AbstractInsert {
         Metrics.addRegistry(new SimpleMeterRegistry());
     }
 
-    private void executeUpdate(Connection connection, String sql) {
-        try (Statement statement = connection.createStatement()) {
-            final int i = statement.executeUpdate(sql);
-            log.debug("updated {} records", i);
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-
-    private void verifyCount(int recordCount, Connection connection) throws SQLException {
-        try (Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("select count(*) from accounts")) {
-
-            int count = 0;
-
-            if (rs.next()) {
-                count = rs.getInt(1);
-            }
-
-            if (count != recordCount) {
-                throw new RuntimeException(String.format("count of inserts [%d] does not match expected count [%d]", count, recordCount));
-            }
-        }
-    }
-
-    public boolean run(Properties connectionProperties, boolean pause) throws IOException {
+    boolean run(Properties connectionProperties, boolean pause) throws IOException {
 
         final AtomicBoolean failed = new AtomicBoolean(false);
 
@@ -118,6 +94,32 @@ abstract class AbstractInsert {
         }
 
         return failed.get();
+    }
+
+    private void executeUpdate(Connection connection, String sql) {
+        try (Statement statement = connection.createStatement()) {
+            final int i = statement.executeUpdate(sql);
+            log.debug("updated {} records", i);
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+
+    private void verifyCount(int recordCount, Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(SELECT_COUNT)) {
+
+            int count = 0;
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+            if (count != recordCount) {
+                throw new RuntimeException(String.format("count of inserts [%d] does not match expected count [%d]", count, recordCount));
+            }
+        }
     }
 
     abstract void insert(int recordCount, int batchSize, Connection connection) throws SQLException;
