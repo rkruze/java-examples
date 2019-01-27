@@ -1,9 +1,11 @@
 # Observations
 
-* when transactions are enabled with inserts on a three node cluster, bad things happen
-* when transactions are enabled with inserts on a one node cluster, everything works as expected
-* retry failures always seem to happen in the first iteration after DDL statements, never in the later iterations which seems to indicated its related to timing of DDL.
+* when transactions are enabled with inserts on a three node cluster, failures occur roughly `30%` of the time
+* when transactions are enabled with inserts on a five node cluster, failures occur roughly `50%` of the time
+* when transactions are enabled with inserts on a one node cluster, everything works as expected; zero failures
+* failures always seem to happen in the first iteration after DDL statements, never in the later iterations which seems to indicated its related to timing of DDL.
 * the duration of the DDL statements as captured in Java does not seem to influence the failure rate. In other words, longer DDL statements do not equal higher failure rates; shorter executions do not reduce failure rates.  This suggests the conflict happens because of something happening in the cluster and after JDBC believes the DDL statement has completed.
+* retry works, but batched statements are lost
 
 With batch size of `250` and record count of `1000`:
 
@@ -54,3 +56,4 @@ With batch size of `250` and record count of `1000`:
 * surprised by this statement "...do not include the INSERT statements within a transaction." here: https://www.cockroachlabs.com/docs/v2.1/performance-best-practices-overview.html#use-multi-row-insert-statements-for-bulk-inserts-into-existing-tables
     * __when disabling transactions, i don't see any issues__
 * `INSERT` docs suggest that `RETURN NOTHING` can be used for inserts inside a transaction... "Within a transaction, use RETURNING NOTHING to return nothing in the response, not even the number of rows affected." This led to higher failure rates in my tests.
+* when batched statements are lost during retry is this an application bug or a db bug?
