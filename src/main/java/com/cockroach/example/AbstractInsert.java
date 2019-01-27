@@ -11,6 +11,7 @@ import java.sql.*;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 abstract class AbstractInsert {
 
@@ -52,7 +53,9 @@ abstract class AbstractInsert {
         }
     }
 
-    public void run(Properties connectionProperties) throws IOException {
+    public boolean run(Properties connectionProperties, boolean pause) throws IOException {
+
+        final AtomicBoolean failed = new AtomicBoolean(false);
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -80,7 +83,11 @@ abstract class AbstractInsert {
                 throw new IllegalArgumentException("transaction isolation must be Connection.TRANSACTION_SERIALIZABLE");
             }
 
-            executeUpdate(connection, DROP_TABLE);
+            timer.record(() -> {
+                executeUpdate(connection, DROP_TABLE);
+            });
+
+            log.info("drop table time: {} ms or {} ns", timer.totalTime(TimeUnit.MILLISECONDS), timer.totalTime(TimeUnit.NANOSECONDS));
 
             timer.record(() -> {
                 executeUpdate(connection, CREATE_TABLE);
@@ -88,11 +95,20 @@ abstract class AbstractInsert {
 
             log.info("create table time: {} ms or {} ns", timer.totalTime(TimeUnit.MILLISECONDS), timer.totalTime(TimeUnit.NANOSECONDS));
 
+            if (pause) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ignore) {
+
+                }
+            }
+
             timer.record(() -> {
                 try {
                     insert(recordCount, batchSize, connection);
                 } catch (SQLException e) {
-                    log.error(e.getMessage(), e);
+                    failed.set(true);
+                    log.error(String.format("error inserting: %s", e.getMessage()), e);
                 }
             });
 
@@ -100,9 +116,12 @@ abstract class AbstractInsert {
 
             verifyCount(recordCount, connection);
 
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
+        } catch (Exception e) {
+            log.error(String.format("error in run: %s", e.getMessage()), e);
+            failed.set(true);
         }
+
+        return failed.get();
     }
 
     abstract void insert(int recordCount, int batchSize, Connection connection) throws SQLException;

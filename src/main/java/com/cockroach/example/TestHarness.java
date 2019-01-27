@@ -3,7 +3,6 @@ package com.cockroach.example;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class TestHarness {
@@ -13,10 +12,10 @@ public class TestHarness {
     private static final String BATCH_INSERT_TEST = "bi";
     private static final String BATCH_INSERT_WITH_RETRY = "bir";
 
-
     public static void main(String[] args) {
 
         String test = BATCH_INSERT_TEST;
+        boolean pause = false;
 
         if (args != null && args.length != 0) {
             test = args[0];
@@ -30,39 +29,47 @@ public class TestHarness {
         // this increases insert performance considerably
         connectionProperties.setProperty("reWriteBatchedInserts", "true");
 
+        String name = null;
+        AbstractInsert insert = null;
 
-        if (test.equals(INSERT_TEST)) {
+        switch (test) {
+            case INSERT_TEST:
+                name = "InsertExample";
+                insert = new InsertExample();
+                break;
+            case BATCH_INSERT_TEST:
+                name = "BatchInsertExample";
+                insert = new BatchInsertExample();
+                break;
+            case BATCH_INSERT_WITH_RETRY:
+                name = "BatchInsertWithRetryExample";
+                insert = new BatchInsertWithRetryExample();
+                break;
+        }
+
+
+        int failureCount = 0;
+        int iterations = 100;
+        for (int i = 0; i < iterations; i++) {
+            log.debug("**************************************** test {}: run {} ****************************************", name, i);
+
             try {
+                connectionProperties.setProperty("ApplicationName", name);
+                boolean failed = insert.run(connectionProperties, true);
 
-                connectionProperties.setProperty("ApplicationName", "com.cockroach.example.InsertExample");
+                if (failed) {
+                    failureCount++;
+                }
 
-                new InsertExample().run(connectionProperties);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error(e.getMessage(), e);
+                failureCount++;
             }
         }
 
-        if (test.equals(BATCH_INSERT_TEST)) {
-            try {
+        float failureRate = (float) failureCount / iterations;
+        log.debug("failure rate = {}", failureRate);
 
-                connectionProperties.setProperty("ApplicationName", "com.cockroach.example.BatchInsertExample");
-
-                new BatchInsertExample().run(connectionProperties);
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-
-        if (test.equals(BATCH_INSERT_WITH_RETRY)) {
-            try {
-
-                connectionProperties.setProperty("ApplicationName", "com.cockroach.example.BatchInsertWithRetryExample");
-
-                new BatchInsertWithRetryExample().run(connectionProperties);
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
 
     }
 }
