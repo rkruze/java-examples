@@ -67,7 +67,7 @@ public class TestHarness {
             }
         }
 
-        float failureRate = (float) failureCount / iterations;
+        float failureRate = ((float) failureCount / iterations) * 100;
         log.debug("failure rate = {}", failureRate);
 
 

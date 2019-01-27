@@ -97,7 +97,7 @@ abstract class AbstractInsert {
 
             if (pause) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(300);
                 } catch (InterruptedException ignore) {
 
                 }
