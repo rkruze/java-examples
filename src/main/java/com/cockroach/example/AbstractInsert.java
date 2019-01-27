@@ -83,15 +83,11 @@ abstract class AbstractInsert {
                 throw new IllegalArgumentException("transaction isolation must be Connection.TRANSACTION_SERIALIZABLE");
             }
 
-            timer.record(() -> {
-                executeUpdate(connection, DROP_TABLE);
-            });
+            timer.record(() -> executeUpdate(connection, DROP_TABLE));
 
             log.info("drop table time: {} ms or {} ns", timer.totalTime(TimeUnit.MILLISECONDS), timer.totalTime(TimeUnit.NANOSECONDS));
 
-            timer.record(() -> {
-                executeUpdate(connection, CREATE_TABLE);
-            });
+            timer.record(() -> executeUpdate(connection, CREATE_TABLE));
 
             log.info("create table time: {} ms or {} ns", timer.totalTime(TimeUnit.MILLISECONDS), timer.totalTime(TimeUnit.NANOSECONDS));
 
