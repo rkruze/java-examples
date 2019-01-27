@@ -20,6 +20,7 @@ abstract class AbstractInsert {
     private static final String DROP_TABLE = "DROP TABLE IF EXISTS accounts";
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), balance INT)";
     private static final String SELECT_COUNT = "select count(*) from accounts";
+    private static final int PAUSE = 300;
 
     static final String INSERT = "INSERT INTO accounts(balance) VALUES(?)";
 
@@ -69,7 +70,7 @@ abstract class AbstractInsert {
 
             if (pause) {
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(PAUSE);
                 } catch (InterruptedException ignore) {
 
                 }
