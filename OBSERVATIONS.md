@@ -58,7 +58,7 @@ With batch size of `250` and record count of `1000`:
 
 
 # Questions
-* could this be related to the use of a load balancer?
+* could this be related to the use of a load balancer? (doesn't seem to be the case)
 * surprised by this statement "...do not include the INSERT statements within a transaction." here: https://www.cockroachlabs.com/docs/v2.1/performance-best-practices-overview.html#use-multi-row-insert-statements-for-bulk-inserts-into-existing-tables
     * __when disabling transactions, i don't see any issues__
 * `INSERT` docs suggest that `RETURN NOTHING` can be used for inserts inside a transaction... "Within a transaction, use RETURNING NOTHING to return nothing in the response, not even the number of rows affected." This led to higher failure rates in my tests.
