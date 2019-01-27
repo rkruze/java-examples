@@ -15,13 +15,10 @@ class BatchInsertWithRetryExample extends AbstractBatchInsert {
 
         while (true) {
 
-            boolean releaseAttempted = false;
-
             try {
                 log.debug("transaction.attemptTransaction(): starting; attempt {}", retryCounter);
                 transactionWrapper.attemptTransaction(connection);
                 log.debug("transaction.attemptTransaction(): successful; attempt {}", retryCounter);
-                releaseAttempted = true;
 
                 log.debug("releaseSavepoint(): starting; attempt {}", retryCounter);
                 connection.releaseSavepoint(savepoint);
@@ -31,14 +28,12 @@ class BatchInsertWithRetryExample extends AbstractBatchInsert {
 
                 String sqlState = e.getSQLState();
 
-                log.error(e.getMessage(), e);
+                log.error(String.format("error trying to commit with sql state [%s]: %s", sqlState, e.getMessage()), e);
 
                 if (sqlState.equals("40001")) {
                     log.debug("rollback(): starting; attempt {}", retryCounter);
                     connection.rollback(savepoint);
                     log.debug("rollback(): successful; attempt {}", retryCounter);
-                } else if (releaseAttempted) {
-                    throw new RuntimeException("fail during release?", e);
                 } else {
                     throw e;
                 }

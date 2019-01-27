@@ -61,8 +61,7 @@ public class TestHarness {
                 }
 
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                failureCount++;
+                log.error(String.format("error calling run (shouldn't get here): %s", e.getMessage()), e);
             }
         }
 

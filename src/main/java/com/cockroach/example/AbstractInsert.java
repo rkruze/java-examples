@@ -102,7 +102,7 @@ abstract class AbstractInsert {
             final int i = statement.executeUpdate(sql);
             log.debug("updated {} records", i);
         } catch (SQLException e) {
-            log.error(e.getMessage(), e);
+            log.error(String.format("error executing update: %s", e.getMessage()), e);
         }
     }
 
