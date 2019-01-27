@@ -15,7 +15,6 @@ With batch size of `250` and record count of `1000`:
 ## No Pause, RETURNING NOTHING
 * When running `BatchInsertExample` in loop of `100` with `RETURNING NOTHING` appended to the insert statement, it fails roughly `64%` of time when no pause after DDL is included.
 
-
 ## With Pause (1000ms)
 * When running `BatchInsertExample` in loop of `100`, it fails roughly `0%` of time when a pause of `1000ms` after DDL is included.
 * When running `BatchInsertWithRetryExample` in loop of `100`, it fails roughly `0%` of time when a pause of `1000ms` after DDL is included.
