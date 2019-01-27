@@ -3,10 +3,11 @@
 * when transactions are enabled with inserts on a three node cluster, failures occur roughly `30%` of the time
 * when transactions are enabled with inserts on a five node cluster, failures occur roughly `50%` of the time
 * when transactions are enabled with inserts on a one node cluster, everything works as expected; zero failures
+* when transactions are disabled with inserts on a three node cluster, everything works as expected; zero failures
 * failures always seem to happen in the first iteration after DDL statements, never in the later iterations which seems to indicated its related to timing of DDL.
-* the duration of the DDL statements as captured in Java does not seem to influence the failure rate. In other words, longer DDL statements do not equal higher failure rates; shorter executions do not reduce failure rates.  This suggests the conflict happens because of something happening in the cluster and after JDBC believes the DDL statement has completed.
-* retry works, but batched statements are lost
-* removing load balancer seems to increase failure rate
+* the duration of the DDL statements, as captured in Java, does not seem to influence the failure rate. In other words, longer DDL execution times do not equal higher failure rates; shorter executions times do not reduce failure rates.  This suggests the conflict happens because of something happening in the cluster after JDBC believes the DDL statement has completed.
+* retry works but batched statements are lost... bug?
+* presence or type of loadbalancer does not impact failures significantly
 
 With batch size of `250` and record count of `1000`:
 
