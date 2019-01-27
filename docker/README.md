@@ -1,15 +1,16 @@
 # Basic CockroachDB Cluster
-Simple 3 node CockroachDB cluster fronted by NGINX acting as load balancer
+Simple 3 node CockroachDB cluster with HAProxy acting as load balancer
 
 ## Services
 * `roach-0` - CockroachDB node
 * `roach-1` - CockroachDB node
 * `roach-2` - CockroachDB node
-* `lb` - NGINX acting as load balancer
+* `lb` - HAProxy acting as load balancer
 
 ## Getting started
 1) run `docker-compose up`
 2) visit the CockroachDB UI @ http://localhost:8080
+2) visit the HAProxy UI @ http://localhost:8081
 3) have fun!
 
 ## Helpful Commands
