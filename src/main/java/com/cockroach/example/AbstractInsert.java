@@ -20,7 +20,6 @@ abstract class AbstractInsert {
     private static final String DROP_TABLE = "DROP TABLE IF EXISTS accounts";
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), balance INT)";
     private static final String SELECT_COUNT = "select count(*) from accounts";
-    private static final int PAUSE = 300;
 
     static final String INSERT = "INSERT INTO accounts(balance) VALUES(?)";
 
@@ -30,7 +29,7 @@ abstract class AbstractInsert {
         Metrics.addRegistry(new SimpleMeterRegistry());
     }
 
-    boolean run(Properties connectionProperties, boolean pause) throws IOException {
+    boolean run(Properties connectionProperties) throws IOException {
 
         final AtomicBoolean failed = new AtomicBoolean(false);
 
@@ -46,6 +45,7 @@ abstract class AbstractInsert {
         final String url = cockroachProperties.getProperty("jdbc.url");
         final int batchSize = Integer.parseInt(cockroachProperties.getProperty("jdbc.batch.size", "5"));
         final int recordCount = Integer.parseInt(cockroachProperties.getProperty("record.count", "1000"));
+        final int pause = Integer.parseInt(cockroachProperties.getProperty("pause.duration", "0"));
 
 
         Timer timer = Timer
@@ -68,9 +68,9 @@ abstract class AbstractInsert {
 
             log.info("create table time: {} ms or {} ns", timer.totalTime(TimeUnit.MILLISECONDS), timer.totalTime(TimeUnit.NANOSECONDS));
 
-            if (pause) {
+            if (pause > 0) {
                 try {
-                    Thread.sleep(PAUSE);
+                    Thread.sleep(pause);
                 } catch (InterruptedException ignore) {
 
                 }

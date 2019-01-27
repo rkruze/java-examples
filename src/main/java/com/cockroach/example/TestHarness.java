@@ -15,7 +15,6 @@ public class TestHarness {
     public static void main(String[] args) {
 
         String test = BATCH_INSERT_TEST;
-        boolean pause = false;
 
         if (args != null && args.length != 0) {
             test = args[0];
@@ -55,7 +54,7 @@ public class TestHarness {
 
             try {
                 connectionProperties.setProperty("ApplicationName", name);
-                boolean failed = insert.run(connectionProperties, true);
+                boolean failed = insert.run(connectionProperties);
 
                 if (failed) {
                     failureCount++;
