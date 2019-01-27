@@ -1,5 +1,6 @@
 # Observations
 
+* when transactions are enabled with inserts, bad things happen
 * retry failures always seem to happen in the first iteration after DDL statements, never in the later iterations which seems to indicated its related to timing of DDL.
 * the duration of the DDL statements as captured in Java does not seem to influence the failure rate. In other words, longer DDL statements do not equal higher failure rates; shorter executions do not reduce failure rates.  This suggests the conflict happens because of something happening in the cluster and after JDBC believes the DDL statement has completed.
 
