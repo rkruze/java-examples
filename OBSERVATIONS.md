@@ -80,14 +80,14 @@ int retryCounter = 1;
 while (true) {
 
     try {
-        // Step 1: calls executeBatch and succeeds; executeBatch clears batch statements
+        // Step 1: calls executeBatch and succeeds; internally executeBatch clears batch statements
         
             // Step 4: second call to executeBatch succeeds, but original statements cleared in Step 1
         transactionWrapper.attemptTransaction(connection);
 
-        // Step 2: call fails with RETRY
+        // Step 2: call to releaseSavepoint fails with RETRY_ASYNC_WRITE_FAILURE, triggering rollback
         
-            // Step 5: second call succeeds
+            // Step 5: second call to releaseSavepoint succeeds
         connection.releaseSavepoint(savepoint);
         break;
     } catch (SQLException e) {
