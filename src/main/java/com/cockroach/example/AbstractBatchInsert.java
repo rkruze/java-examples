@@ -11,9 +11,6 @@ abstract class AbstractBatchInsert extends AbstractInsert {
 
     final Logger log = LoggerFactory.getLogger(getClass());
 
-    static final String SAVEPOINT_NAME = "cockroach_restart";
-
-
     @Override
     void insert(int recordCount, int batchSize, Connection connection) throws SQLException {
 

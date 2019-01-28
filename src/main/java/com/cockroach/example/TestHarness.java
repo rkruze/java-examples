@@ -11,6 +11,7 @@ public class TestHarness {
     private static final String INSERT_TEST = "i";
     private static final String BATCH_INSERT_TEST = "bi";
     private static final String BATCH_INSERT_WITH_RETRY = "bir";
+    private static final String BATCH_INSERT_WITH_RETRY2 = "bir2";
 
     public static void main(String[] args) {
 
@@ -43,6 +44,10 @@ public class TestHarness {
             case BATCH_INSERT_WITH_RETRY:
                 name = "BatchInsertWithRetryExample";
                 insert = new BatchInsertWithRetryExample();
+                break;
+            case BATCH_INSERT_WITH_RETRY2:
+                name = "BatchInsertWithRetryExample2";
+                insert = new BatchInsertWithRetryExample2();
                 break;
         }
 

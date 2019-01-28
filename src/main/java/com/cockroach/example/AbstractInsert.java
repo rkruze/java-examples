@@ -23,6 +23,8 @@ abstract class AbstractInsert {
 
     static final String INSERT = "INSERT INTO accounts(balance) VALUES(?)";
 
+    static final String SAVEPOINT_NAME = "cockroach_restart";
+
     static final Random RANDOM = new Random();
 
     AbstractInsert() {
