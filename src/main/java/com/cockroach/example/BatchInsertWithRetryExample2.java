@@ -28,17 +28,20 @@ public class BatchInsertWithRetryExample2 extends AbstractInsert {
 
                         log.debug("executing batch for record {}", i);
                         statement.executeBatch();
+
+                        log.debug("clearing batch for record {}", i);
                         statement.clearBatch();
                     }
 
                 }
 
                 log.debug("executing remaining batch...");
-
                 statement.executeBatch();
+
+                log.debug("clearing batch...");
                 statement.clearBatch();
 
-                log.debug("releasing statement...");
+                log.debug("releasing savepoint...");
                 connection.releaseSavepoint(savepoint);
 
                 log.debug("committing...");
