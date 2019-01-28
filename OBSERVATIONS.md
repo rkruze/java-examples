@@ -67,3 +67,45 @@ With batch size of `250` and record count of `1000`:
 * when batched statements are lost during retry is this an application bug or a db bug?
 * is the placement of `connection.setAutoCommit(false);` problematic?  should it be right before commit attempt?
 * does using a connection per statement change behavior?
+
+# Execute Batch Issue?
+
+When implementing retry logic the following is observed, follow steps...Need to figure out how to save/replay statements added to batch.
+
+```java
+Savepoint savepoint = connection.setSavepoint(SAVEPOINT_NAME);
+
+int retryCounter = 1;
+
+while (true) {
+
+    try {
+        // Step 1: calls executeBatch and succeeds; executeBatch clears batch statements
+        
+            // Step 4: second call to executeBatch succeeds, but original statements cleared in Step 1
+        transactionWrapper.attemptTransaction(connection);
+
+        // Step 2: call fails with RETRY
+        
+            // Step 5: second call succeeds
+        connection.releaseSavepoint(savepoint);
+        break;
+    } catch (SQLException e) {
+
+        String sqlState = e.getSQLState();
+
+        if (sqlState.equals("40001")) {
+            // Step 3: rollback attempted and succeeds
+            connection.rollback(savepoint);
+        } else {
+            throw e;
+        }
+    }
+
+    retryCounter++;
+}
+
+
+// Step 6: commit succeeds and process continues but statements from original execution are lost and never saved which is bad.
+connection.commit();
+```
