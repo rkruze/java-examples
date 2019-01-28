@@ -70,7 +70,15 @@ With batch size of `250` and record count of `1000`:
 
 # Execute Batch Issue?
 
-When implementing retry logic the following is observed, follow steps...Need to figure out how to save/replay statements added to batch.
+When implementing retry logic the following is observed.  Need to figure out how to save/replay statements added to batch.
+
+- Step 1: calls `executeBatch` and succeeds; internally `executeBatch` clears batch statements
+- Step 2: call to `releaseSavepoint` fails with `RETRY_ASYNC_WRITE_FAILURE`, triggering rollback
+- Step 3: `rollback` attempted and succeeds
+- Step 4: second call to `executeBatch` succeeds, but original statements cleared in Step 1
+- Step 5: second call to `releaseSavepoint` succeeds
+- Step 6: `commit` succeeds and process continues but statements from original execution are lost and never saved which is bad.
+
 
 ```java
 Savepoint savepoint = connection.setSavepoint(SAVEPOINT_NAME);
@@ -80,14 +88,14 @@ int retryCounter = 1;
 while (true) {
 
     try {
-        // Step 1: calls executeBatch and succeeds; internally executeBatch clears batch statements
+        // Step 1
         
-            // Step 4: second call to executeBatch succeeds, but original statements cleared in Step 1
+            // Step 4
         transactionWrapper.attemptTransaction(connection);
 
-        // Step 2: call to releaseSavepoint fails with RETRY_ASYNC_WRITE_FAILURE, triggering rollback
+        // Step 2
         
-            // Step 5: second call to releaseSavepoint succeeds
+            // Step 5
         connection.releaseSavepoint(savepoint);
         break;
     } catch (SQLException e) {
@@ -95,7 +103,7 @@ while (true) {
         String sqlState = e.getSQLState();
 
         if (sqlState.equals("40001")) {
-            // Step 3: rollback attempted and succeeds
+            // Step 3
             connection.rollback(savepoint);
         } else {
             throw e;
@@ -106,6 +114,6 @@ while (true) {
 }
 
 
-// Step 6: commit succeeds and process continues but statements from original execution are lost and never saved which is bad.
+// Step 6
 connection.commit();
 ```
