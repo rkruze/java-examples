@@ -65,3 +65,5 @@ With batch size of `250` and record count of `1000`:
     * __when disabling transactions, i don't see any issues__
 * `INSERT` docs suggest that `RETURN NOTHING` can be used for inserts inside a transaction... "Within a transaction, use RETURNING NOTHING to return nothing in the response, not even the number of rows affected." This led to higher failure rates in my tests.
 * when batched statements are lost during retry is this an application bug or a db bug?
+* is the placement of `connection.setAutoCommit(false);` problematic?  should it be right before commit attempt?
+* does using a connection per statement change behavior?
