@@ -88,14 +88,10 @@ int retryCounter = 1;
 while (true) {
 
     try {
-        // Step 1
-        
-            // Step 4
+        // Step 1 & Step 4
         transactionWrapper.attemptTransaction(connection);
 
-        // Step 2
-        
-            // Step 5
+        // Step 2 & Step 5
         connection.releaseSavepoint(savepoint);
         break;
     } catch (SQLException e) {
