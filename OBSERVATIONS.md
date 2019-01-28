@@ -79,7 +79,7 @@ When implementing retry logic the following is observed.  Need to figure out how
 - Step 5: second call to `releaseSavepoint` succeeds
 - Step 6: `commit` succeeds and process continues but statements from original execution are lost and never saved which is bad.
 
-
+Retry logic...
 ```java
 Savepoint savepoint = connection.setSavepoint(SAVEPOINT_NAME);
 
