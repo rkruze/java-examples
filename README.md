@@ -20,6 +20,9 @@ java -jar java-examples-1.0-SNAPSHOT.jar bi
 # Batch Insert Test with Retry
 java -jar java-examples-1.0-SNAPSHOT.jar bir
 ```
+# Batch Insert Test with Retry - 2
+java -jar java-examples-1.0-SNAPSHOT.jar bir2
+```
 
 ## Miscellaneous
 You can view Postgres Driver logging by adding the following parameter at startup:
