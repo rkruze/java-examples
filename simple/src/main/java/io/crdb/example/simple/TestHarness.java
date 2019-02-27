@@ -1,4 +1,4 @@
-package io.crdb.example.legacy;
+package io.crdb.example.simple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

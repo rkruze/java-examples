@@ -19,7 +19,8 @@
 
 
     <modules>
-        <module>transaction-legacy</module>
+        <module>simple</module>
+        <module>spring</module>
     </modules>
 
 </project>

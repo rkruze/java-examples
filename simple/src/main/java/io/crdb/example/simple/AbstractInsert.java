@@ -1,4 +1,4 @@
-package io.crdb.example.legacy;
+package io.crdb.example.simple;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
