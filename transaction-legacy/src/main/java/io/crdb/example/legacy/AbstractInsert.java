@@ -1,4 +1,4 @@
-package com.cockroach.example;
+package io.crdb.example.legacy;
 
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Timer;

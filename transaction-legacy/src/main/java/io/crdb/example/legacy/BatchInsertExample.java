@@ -1,4 +1,4 @@
-package com.cockroach.example;
+package io.crdb.example.legacy;
 
 import java.sql.Connection;
 import java.sql.SQLException;
