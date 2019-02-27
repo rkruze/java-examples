@@ -34,22 +34,22 @@ public class JdbcTemplateRunner implements ApplicationRunner {
         this.environment = environment;
     }
 
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
         int batchSize = environment.getProperty("example.batch.size", Integer.class, 128);
         int recordCount = environment.getProperty("example.record.count", Integer.class, 1000);
 
-
+        // Generate dummy data...
         List<Integer> data = new ArrayList<>();
-
         for (int i = 1; i <= recordCount; i++) {
             data.add(RANDOM.nextInt());
         }
 
+        // Batch insert dummy data into CockroachDB
         jdbcTemplate.batchUpdate(INSERT, data, batchSize, (ps, argument) -> ps.setInt(1, argument));
 
+        // Verify insert was successfull
         Integer count = jdbcTemplate.queryForObject(SELECT_COUNT, Integer.class);
 
         if (count == null || count != recordCount) {
