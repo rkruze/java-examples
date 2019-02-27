@@ -42,11 +42,9 @@ public class DataSourceRunner implements ApplicationRunner {
         int batchSize = environment.getProperty("example.batch.size", Integer.class, 128);
         int recordCount = environment.getProperty("example.record.count", Integer.class, 1000);
 
-
         try (Connection connection = dataSource.getConnection()) {
 
-            // insert records
-
+            // Batch insert dummy data into CockroachDB
             try (final PreparedStatement insert = connection.prepareStatement(INSERT)) {
 
                 for (int i = 1; i <= recordCount; i++) {
@@ -56,14 +54,13 @@ public class DataSourceRunner implements ApplicationRunner {
                     if ((i % batchSize) == 0) {
                         insert.executeBatch();
                     }
-
                 }
 
                 insert.executeBatch();
             }
 
-            // query to verify insert
 
+            // Verify insert was successful
             try (Statement select = connection.createStatement();
                  ResultSet rs = select.executeQuery(SELECT_COUNT)) {
 
@@ -77,8 +74,6 @@ public class DataSourceRunner implements ApplicationRunner {
                     throw new RuntimeException(String.format("count of inserts [%d] does not match expected count [%d]", count, recordCount));
                 }
             }
-
         }
-
     }
 }

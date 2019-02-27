@@ -49,7 +49,7 @@ public class JdbcTemplateRunner implements ApplicationRunner {
         // Batch insert dummy data into CockroachDB
         jdbcTemplate.batchUpdate(INSERT, data, batchSize, (ps, argument) -> ps.setInt(1, argument));
 
-        // Verify insert was successfull
+        // Verify insert was successful
         Integer count = jdbcTemplate.queryForObject(SELECT_COUNT, Integer.class);
 
         if (count == null || count != recordCount) {
