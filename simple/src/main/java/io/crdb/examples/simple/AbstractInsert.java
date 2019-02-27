@@ -1,4 +1,4 @@
-package io.crdb.example.simple;
+package io.crdb.examples.simple;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -15,11 +15,11 @@ abstract class AbstractInsert {
 
     final Logger log = LoggerFactory.getLogger(getClass());
 
-    private static final String DROP_TABLE = "DROP TABLE IF EXISTS accounts";
-    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), balance INT)";
-    private static final String SELECT_COUNT = "select count(*) from accounts";
+    private static final String DROP_TABLE = "DROP TABLE IF EXISTS simple_example CASCADE";
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS simple_example (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), balance INT)";
+    private static final String SELECT_COUNT = "select count(*) from simple_example";
 
-    static final String INSERT = "INSERT INTO accounts(balance) VALUES(?)";
+    static final String INSERT = "INSERT INTO simple_example(balance) VALUES(?)";
 
     static final String SAVEPOINT_NAME = "cockroach_restart";
 

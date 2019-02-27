@@ -1,4 +1,4 @@
-package io.crdb.example.simple;
+package io.crdb.examples.simple;
 
 import java.sql.Connection;
 import java.sql.SQLException;
