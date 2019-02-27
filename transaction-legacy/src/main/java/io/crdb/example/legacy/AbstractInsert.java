@@ -1,8 +1,6 @@
 package io.crdb.example.legacy;
 
-import io.micrometer.core.instrument.Metrics;
-import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +25,6 @@ abstract class AbstractInsert {
 
     static final Random RANDOM = new Random();
 
-    AbstractInsert() {
-        Metrics.addRegistry(new SimpleMeterRegistry());
-    }
-
     boolean run(Properties connectionProperties) throws IOException {
 
         final AtomicBoolean failed = new AtomicBoolean(false);
@@ -45,14 +39,10 @@ abstract class AbstractInsert {
         cockroachProperties.load(AbstractInsert.class.getClassLoader().getResourceAsStream("cockroach.properties"));
 
         final String url = cockroachProperties.getProperty("jdbc.url");
-        final int batchSize = Integer.parseInt(cockroachProperties.getProperty("jdbc.batch.size", "5"));
+        final int batchSize = Integer.parseInt(cockroachProperties.getProperty("jdbc.batch.size", "128"));
         final int recordCount = Integer.parseInt(cockroachProperties.getProperty("record.count", "1000"));
         final int pause = Integer.parseInt(cockroachProperties.getProperty("pause.duration", "0"));
 
-
-        Timer timer = Timer
-                .builder("insert")
-                .register(Metrics.globalRegistry);
 
         try (Connection connection = DriverManager.getConnection(url, connectionProperties)) {
 
@@ -62,13 +52,20 @@ abstract class AbstractInsert {
                 throw new IllegalArgumentException("transaction isolation must be Connection.TRANSACTION_SERIALIZABLE");
             }
 
-            timer.record(() -> executeUpdate(connection, DROP_TABLE));
+            StopWatch sw = new StopWatch();
 
-            log.info("drop table time: {} ms or {} ns", timer.totalTime(TimeUnit.MILLISECONDS), timer.totalTime(TimeUnit.NANOSECONDS));
+            sw.start();
+            executeUpdate(connection, DROP_TABLE);
+            sw.stop();
 
-            timer.record(() -> executeUpdate(connection, CREATE_TABLE));
+            log.info("drop table time: {} ms or {} ns", sw.getTime(TimeUnit.MILLISECONDS), sw.getTime(TimeUnit.NANOSECONDS));
 
-            log.info("create table time: {} ms or {} ns", timer.totalTime(TimeUnit.MILLISECONDS), timer.totalTime(TimeUnit.NANOSECONDS));
+            sw.reset();
+            sw.start();
+            executeUpdate(connection, CREATE_TABLE);
+            sw.stop();
+
+            log.info("create table time: {} ms or {} ns", sw.getTime(TimeUnit.MILLISECONDS), sw.getTime(TimeUnit.NANOSECONDS));
 
             if (pause > 0) {
                 try {
@@ -78,16 +75,19 @@ abstract class AbstractInsert {
                 }
             }
 
-            timer.record(() -> {
-                try {
-                    insert(recordCount, batchSize, connection);
-                } catch (SQLException e) {
-                    failed.set(true);
-                    log.error(String.format("error inserting: %s", e.getMessage()), e);
-                }
-            });
 
-            log.info("insert time: {} seconds or {} ms", timer.totalTime(TimeUnit.SECONDS), timer.totalTime(TimeUnit.MILLISECONDS));
+            try {
+                sw.reset();
+                sw.start();
+                insert(recordCount, batchSize, connection);
+                sw.stop();
+            } catch (SQLException e) {
+                failed.set(true);
+                log.error(String.format("error inserting: %s", e.getMessage()), e);
+            }
+
+
+            log.info("insert time: {} seconds or {} ms",  sw.getTime(TimeUnit.SECONDS),  sw.getTime(TimeUnit.MILLISECONDS));
 
             verifyCount(recordCount, connection);
 
